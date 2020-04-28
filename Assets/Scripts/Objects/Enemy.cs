@@ -6,37 +6,59 @@ namespace Objects
 {
     public class Enemy : MonoBehaviour
     {
-        public ZombieAttack Attack;
+
         public Character Character;
-        [Range(0,100)]
+        [Range(0, 100)]
         public float DamageToPlayer = 20f;
-        [Range(0,100)]
+        [Range(0, 100)]
         public float DamageToBase = 10f;
         public GameController Controller;
         private GameObject _target;
         public float Speed = 10f;
+        public float AttackRange = 50f;
 
         private void OnEnable()
         {
-            //Character.Health.DieEvent+=
+
             Character.Movement.Speed = Speed;
-            _target = Controller.Base;
-            Attack.AttackPlayerEvent += AttackPlayer;
+            if (Controller != null)
+                _target = Controller.Base.gameObject;
             Character.Movement.MovePosition(_target.transform.position);
 
         }
-        private void AttackPlayer(GameObject player)
+
+        private void Update()
         {
-            _target = player;
+            if (Controller.Player != null)
+            { 
+                var dist = Vector3.Distance(Controller.Player.transform.position, gameObject.transform.position);
+                if (dist <= AttackRange)
+                {
+                    AttackPlayer();
+                }
+            }
+        }
+        private void AttackPlayer()
+        {
+            _target = Controller.Player.gameObject;
             Character.Movement.MovePosition(_target.transform.position);
 
         }
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.tag.Equals("Player"))//TODO
+            {
+                var health = collision.gameObject.GetComponent<Health>();
+                health?.Damage(DamageToPlayer);
+                Destroy(gameObject);
+            }
+            if (collision.gameObject.GetComponent<Base>()!=null)
+            {
+                var health = collision.gameObject.GetComponent<Health>();
+                health?.Damage(DamageToBase);
+                Destroy(gameObject);
+            }
 
-
-
-
-
-
-
+        }
     }
 }

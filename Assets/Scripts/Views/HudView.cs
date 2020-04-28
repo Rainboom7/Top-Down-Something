@@ -2,6 +2,7 @@
 using Objects;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Views
 {
@@ -12,21 +13,26 @@ namespace Views
 		[SerializeField]
 		private EndGameView _endGameView;
 
-		public TextMeshProUGUI Basehealthtext;
-		public TextMeshProUGUI HitpointsText;
+		public Text BaseHealthtext;
+        public Text HitpointsText;
+        public Text AmmoText;
 
 		private Character _playerCharacter;
 
-		public void SetBaseHealth(int value)
+		public void SetBaseHealth(float value)
 		{
-			Basehealthtext.text = value.ToString();
+			BaseHealthtext.text = value.ToString();
 		}
 
-		public void SetHealth(float value)
-		{
-			HitpointsText.text = Mathf.RoundToInt(value) + "%";
-		}
+        public void SetHealth(float value)
+        {
+            HitpointsText.text = value.ToString();
+        }
+        public void SetAmmo(int currentAmmo, int maxAmmo)
+        {
+            AmmoText.text = currentAmmo.ToString() + '/' + maxAmmo.ToString();
 
+        }
 		public IEndGameView EndGameView => _endGameView;
 	}
 }

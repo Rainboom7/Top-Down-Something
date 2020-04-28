@@ -23,5 +23,15 @@ namespace Objects
         {
             Destroy(gameObject);
         }
+        public void Fire(GameObject target)
+        {
+            if (Weapon == null)
+                return;
+            transform.rotation = Quaternion.LookRotation(target.transform.position);
+            transform.Rotate(new Vector3(0, 135f, 0));
+            Weapon.Fire(target);
+
+        }
+      
     }
 }

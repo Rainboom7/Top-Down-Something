@@ -71,13 +71,14 @@
     <Compile Include="Assets\Scripts\Core\IGame.cs" />
     <Compile Include="Assets\Scripts\Core\IView.cs" />
     <Compile Include="Assets\Scripts\FollowCamera.cs" />
+    <Compile Include="Assets\Scripts\Objects\Base.cs" />
+    <Compile Include="Assets\Scripts\Objects\Bullet.cs" />
     <Compile Include="Assets\Scripts\Objects\Character.cs" />
     <Compile Include="Assets\Scripts\Objects\Enemy.cs" />
     <Compile Include="Assets\Scripts\Objects\Health.cs" />
     <Compile Include="Assets\Scripts\Objects\Movement.cs" />
     <Compile Include="Assets\Scripts\Objects\Spawner.cs" />
     <Compile Include="Assets\Scripts\Objects\Weapon.cs" />
-    <Compile Include="Assets\Scripts\Objects\ZombieAttack.cs" />
     <Compile Include="Assets\Scripts\Views\BaseView.cs" />
     <Compile Include="Assets\Scripts\Views\EndGameView.cs" />
     <Compile Include="Assets\Scripts\Views\GameView.cs" />

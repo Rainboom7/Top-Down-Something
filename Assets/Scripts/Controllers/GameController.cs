@@ -9,9 +9,10 @@ namespace Controllers
     public interface IGameView
 	{
 		event Action PlayerDeadEvent;
-		event Action<float> PlayerHealthChangeEvent;
-        
-		void StartGame();
+        event Action<float> PlayerHealthChangeEvent;
+        event Action<float> BaseHealthChangeEvent;
+
+        void StartGame();
 		void StopGame();
 		
 		IHudView HudView { get; }
@@ -22,17 +23,15 @@ namespace Controllers
 	public class GameController : ScriptableObject, IGame
 	{
 		public event Action EndGameEvent;
-		public event Action<int> BaseHealthChangeEvent;
+		public event Action<float> BaseHealthChangeEvent;
 		public event Action<float> PlayerHealthChangeEvent;
 
 		public Character Player { get; set; }
         private readonly List<GameObject> _objects = new List<GameObject>();
-        public GameObject Base;
+        public Base Base { get; set; }
 
         private IGameView _view;
-        [Range(1,500)]
-        public int StartBaseHealth;
-		private int _baseHealth;
+
 
 		public void AddObject(GameObject obj)
 		{
@@ -44,15 +43,10 @@ namespace Controllers
 			_objects.Remove(obj);
 		}
 
-		public void DamageBase(int damage)
-		{
-			_baseHealth -= damage;
-            BaseHealthChangeEvent?.Invoke(_baseHealth);	
-		}
+
 
 		public void NewGame()
 		{
-            _baseHealth = StartBaseHealth;
 			_view?.HudView?.Open(new HudController(this));
 			_view?.StartGame();
 		}
@@ -60,7 +54,8 @@ namespace Controllers
 		public void OnOpen(IGameView view)
 		{
 			view.PlayerDeadEvent += OnPlayerDead;
-			view.PlayerHealthChangeEvent += OnPlayerHealthChange;
+            view.PlayerHealthChangeEvent += OnPlayerHealthChange;
+            view.BaseHealthChangeEvent += OnBaseHealthChange;
 			view.MenuView?.Open(new MenuController(this));
             _view = view;
 		}
@@ -68,15 +63,16 @@ namespace Controllers
 		public void OnClose(IGameView view)
 		{
 			view.PlayerDeadEvent -= OnPlayerDead;
-			view.PlayerHealthChangeEvent -= OnPlayerHealthChange;
-			_view = null;
+            view.PlayerHealthChangeEvent -= OnPlayerHealthChange;
+            view.BaseHealthChangeEvent -= OnBaseHealthChange;
+            _view = null;
 		}
 
 		private void OnPlayerDead()
 		{
 			_view?.StopGame();
-			
-			//_view?.HudView.EndGameView?.Open(new EndGameController(this, _scores));
+        
+			_view?.HudView.EndGameView?.Open(new EndGameController(this));
 
 			foreach (var o in _objects.ToArray()) 
 				Destroy(o);
@@ -85,9 +81,13 @@ namespace Controllers
 			EndGameEvent?.Invoke();
 		}
 
-		private void OnPlayerHealthChange(float value)
-		{
-			PlayerHealthChangeEvent?.Invoke(value);
-		}
-	}
+        private void OnPlayerHealthChange(float value)
+        {
+            PlayerHealthChangeEvent?.Invoke(value);
+        }
+        private void OnBaseHealthChange(float value)
+        {
+            BaseHealthChangeEvent?.Invoke(value);
+        }
+    }
 }

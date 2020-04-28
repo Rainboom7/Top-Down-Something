@@ -10,10 +10,13 @@ namespace Objects
         public float Speed;
 
 
-       public void MovePosition(Vector3 destination)
+        public void MovePosition(Vector3 destination)
         {
+            if (Agent == null)
+                return;
             Agent.speed = Speed;
             Agent.SetDestination(destination);
         }
+       
     }
 }

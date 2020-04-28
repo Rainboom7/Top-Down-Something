@@ -4,7 +4,7 @@ namespace Controllers
 {
     public interface IHudView : IView
     {
-        void SetBaseHealth(int value);
+        void SetBaseHealth(float value);
         void SetHealth(float value);
 
         IEndGameView EndGameView { get; }
@@ -43,7 +43,7 @@ namespace Controllers
             _view?.Close(this);
         }
 
-        private void OnBaseHealthChanged(int baseHealth)
+        private void OnBaseHealthChanged(float baseHealth)
         {
             _view.SetBaseHealth(baseHealth);
         }

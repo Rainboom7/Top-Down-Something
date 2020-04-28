@@ -1,5 +1,7 @@
 using System;
 using Core;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Controllers
 {
@@ -7,25 +9,21 @@ namespace Controllers
     {
         event Action ReplayEvent;
 
-        void SetScore(int value);
     }
 
     public class EndGameController : IController<IEndGameView>
     {
         private readonly IGame _game;
-        private readonly int _score;
 
         private IEndGameView _view;
 
-        public EndGameController(IGame game, int score)
+        public EndGameController(IGame game)
         {
             _game = game;
-            _score = score;
         }
 
         public void OnOpen(IEndGameView view)
         {
-            view.SetScore(_score);
             view.ReplayEvent += OnReplay;
             _view = view;
         }

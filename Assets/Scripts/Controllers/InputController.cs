@@ -22,15 +22,21 @@ namespace Controllers
                 Ray castPoint = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
-                {       
+                {
                     _player?.Movement?.MovePosition(hit.point);
                 }
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                Ray castPoint = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                Physics.Raycast(castPoint, out hit, Mathf.Infinity);
+                if (hit.collider.gameObject.GetComponent<Enemy>() != null)
+                     _player.Fire(hit.collider.gameObject);
 
 
             }
-             
-
         }
-    }
 
+    }
 }

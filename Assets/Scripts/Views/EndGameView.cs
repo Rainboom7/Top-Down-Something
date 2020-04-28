@@ -1,6 +1,7 @@
 ﻿using System;
 using Controllers;
 using TMPro;
+using UnityEngine;
 
 namespace Views
 {
@@ -8,18 +9,12 @@ namespace Views
 	{
 		protected override IEndGameView View => this;
 
-		public TextMeshProUGUI ScoreText;
-
 		public event Action ReplayEvent;
-		
-		public void SetScore(int value)
-		{
-			ScoreText.text = value.ToString();
-		}
-
+	
 		public void ActionReplay()
 		{
-			ReplayEvent?.Invoke();
+            ReplayEvent?.Invoke();
+            
 		}
 	}
 }

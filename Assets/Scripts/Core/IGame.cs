@@ -7,7 +7,7 @@ namespace Core
     public interface IGame
     {
         event Action EndGameEvent;
-        event Action<int> BaseHealthChangeEvent;
+        event Action<float> BaseHealthChangeEvent;
         event Action<float> PlayerHealthChangeEvent;
 
         void NewGame();

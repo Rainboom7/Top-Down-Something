@@ -13,7 +13,7 @@ namespace Views
 		public InputController InputController;
 		public FollowCamera FollowCamera;
         public GameObject[] GameObjects;
-        public GameObject Base;
+        public Base Base;
 
 		[SerializeField]
 		public MenuView _menuView;
@@ -21,9 +21,10 @@ namespace Views
 		private HudView _hudView;
 
 		public event Action PlayerDeadEvent;
-		public event Action<float> PlayerHealthChangeEvent;
-		
-		private void OnEnable()
+        public event Action<float> PlayerHealthChangeEvent;
+        public event Action<float> BaseHealthChangeEvent;
+
+        private void OnEnable()
 		{
 			Controller.OnOpen(this);
 		}
@@ -34,28 +35,42 @@ namespace Views
 		}
 
 
-		private void SpawnPlayer()
-		{
-			var player = Instantiate(PlayerPrefab, PlayerStartPoint.position, PlayerStartPoint.rotation);
-			if (player == null) 
-				return;
-			var health = player.Health;
-			if (health == null) 
-				return;
+        private void SpawnPlayer()
+        {
+            Debug.Log(gameObject.name);
+            if (Controller.Player != null)
+                Destroy(Controller.Player);
+            Controller.Player = null;
+            var player = Instantiate(PlayerPrefab, PlayerStartPoint.position, PlayerStartPoint.rotation);
+            if (player == null)
+                return;
+            var health = player.Health;
+            if (health == null)
+                return;
 
-			InputController.SetPlayer(player);
-			FollowCamera.Target = player.transform;
+            if (player.Weapon == null)
+                return;
+            player.Weapon.AmmoChangeEvent += OnAmmoChange;
+
+            InputController.SetPlayer(player);
+            FollowCamera.Target = player.transform;
             Controller.Player = player;
-            Controller.Base = Base;
-			
-			health.DieEvent += OnPlayerDead;
-			health.ChangeHealthEvent += OnPlayerHealthChange;
-			OnPlayerHealthChange(health.Hitpoints);
-		}
+            Controller.AddObject(player.gameObject);
+
+            health.DieEvent += OnPlayerDead;
+            health.ChangeHealthEvent += OnPlayerHealthChange;
+            OnPlayerHealthChange(health.Hitpoints);
+            OnAmmoChange(player.Weapon.Ammo, player.Weapon.Ammo);
+        }
+
 
 		public void StartGame()
 		{
-			SpawnPlayer();
+            SpawnPlayer();
+            Base.Health.DieEvent += OnPlayerDead;
+            Base.Health.ChangeHealthEvent += OnBaseHealthChange;
+            Controller.Base = Base;
+            OnBaseHealthChange(Base.Health.Hitpoints);
 			foreach(var o in GameObjects) 
 				o.SetActive(true);
 		}
@@ -63,13 +78,25 @@ namespace Views
 		public void StopGame()
 		{
 			var player = Controller.Player;
-			if(player != null && player.Health != null)
-			{
-				player.Health.DieEvent -= OnPlayerDead;
-				player.Health.ChangeHealthEvent -= OnPlayerHealthChange;
-			}
+            if (player != null && player.Health != null)
+            {
+                player.Health.DieEvent -= OnPlayerDead;
+                player.Health.ChangeHealthEvent -= OnPlayerHealthChange;
+                if(player.Weapon!=null)
+                    player.Weapon.AmmoChangeEvent -= OnAmmoChange;
 
-			Controller.Player = null;
+
+            }
+            
+            if (Base != null)
+            {
+                Base.Health.ChangeHealthEvent -= OnBaseHealthChange;
+                if (Base.Health != null)
+                    Base.Health.DieEvent -= OnPlayerDead;
+            }
+
+                    Controller.Base = null;
+                    Controller.Player = null;
 			
 			foreach(var o in GameObjects) 
 				o.SetActive(false);
@@ -82,10 +109,18 @@ namespace Views
 		{
 			PlayerDeadEvent?.Invoke();
 		}
-		
-		private void OnPlayerHealthChange(float value)
-		{
-			PlayerHealthChangeEvent?.Invoke(value);
-		}
-	}
+
+        private void OnPlayerHealthChange(float value)
+        {
+            PlayerHealthChangeEvent?.Invoke(value);
+        }
+        private void OnBaseHealthChange(float value)
+        {
+            BaseHealthChangeEvent?.Invoke(value);
+        }
+        private void OnAmmoChange(int ammo, int maxAmmo)
+        {
+            _hudView?.SetAmmo(ammo, maxAmmo);
+        }
+    }
 }

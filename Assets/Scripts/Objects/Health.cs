@@ -22,8 +22,6 @@ namespace Objects
             if (Currenthealth <= 0)
                 DieEvent?.Invoke();
             ChangeHealthEvent?.Invoke(Currenthealth);
-
-
         }
 
 

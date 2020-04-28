@@ -9,6 +9,7 @@ namespace Objects
         [Range(0.5f, 10)]
         public float SpawnTime;
         public GameObject prefab;
+        public Controllers.GameController GameController;
 
         private float _timer;
         private Coroutine _spawnRoutine;
@@ -31,7 +32,8 @@ namespace Objects
                 yield return new WaitForSeconds(SpawnTime);
                 while(true)
                 {
-                    Instantiate(prefab, transform.position, transform.rotation);
+                    var obj = Instantiate(prefab, transform.position, transform.rotation);
+                    GameController.AddObject(obj);
                     yield return new WaitForSeconds(SpawnTime);
 
             
