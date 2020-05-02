@@ -12,53 +12,45 @@ namespace Objects
         public float DamageToPlayer = 20f;
         [Range(0, 100)]
         public float DamageToBase = 10f;
-        public GameController Controller;
-        private GameObject _target;
+        [HideInInspector]
+        public Base Base;
         public float Speed = 10f;
-        public float AttackRange = 50f;
 
         private void OnEnable()
         {
 
             Character.Movement.Speed = Speed;
-            if (Controller != null)
-                _target = Controller.Base.gameObject;
-            Character.Movement.MovePosition(_target.transform.position);
+            if (Base != null)             
+            Character.Movement.MovePosition(Base.transform.position);
 
         }
-
-        private void Update()
+        public void ChangeTarget(GameObject target)
         {
-            if (Controller.Player != null)
-            { 
-                var dist = Vector3.Distance(Controller.Player.transform.position, gameObject.transform.position);
-                if (dist <= AttackRange)
-                {
-                    AttackPlayer();
-                }
+
+            if (target != null)
+                Character.Movement.MovePosition(target.transform.position);
+            else if (Base != null)
+            {
+                Character.Movement.MovePosition(Base.transform.position);
             }
-        }
-        private void AttackPlayer()
-        {
-            _target = Controller.Player.gameObject;
-            Character.Movement.MovePosition(_target.transform.position);
 
         }
+      
+
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.tag.Equals("Player"))//TODO
+            if (collision.gameObject.GetComponent<Player>()!=null)
             {
                 var health = collision.gameObject.GetComponent<Health>();
                 health?.Damage(DamageToPlayer);
                 Destroy(gameObject);
             }
-            if (collision.gameObject.GetComponent<Base>()!=null)
+            if (collision.gameObject.GetComponent<Base>() != null)
             {
                 var health = collision.gameObject.GetComponent<Health>();
                 health?.Damage(DamageToBase);
                 Destroy(gameObject);
             }
-
         }
     }
 }

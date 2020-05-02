@@ -18,14 +18,14 @@ namespace Objects
         public Bullet Bullet;
         public float ReloadTime;
         public float FireTime;
-        public int Ammo;
+        public int MaxAmmo;
         private float _timer;
-        private int _ammo;
+        public int Ammo { get; private set; }
         private GameObject _taget;
         private void OnEnable()
         {
             _weaponState = WeaponState.None;
-            _ammo = Ammo;
+            Ammo = MaxAmmo;
         }
 
         private void Update()
@@ -43,8 +43,8 @@ namespace Objects
                 {
                     _weaponState = WeaponState.None;
                     _timer = 0f;
-                    _ammo = Ammo;
-                    AmmoChangeEvent?.Invoke(_ammo, Ammo);
+                    Ammo = MaxAmmo;
+                    AmmoChangeEvent?.Invoke(Ammo, MaxAmmo);
                 }
             }
             
@@ -54,7 +54,7 @@ namespace Objects
         {
             if (_weaponState != WeaponState.None)
                 return;
-            if (_ammo < 1)
+            if (Ammo < 1)
             {
                 Reload();
                 return;
@@ -62,8 +62,8 @@ namespace Objects
             _taget = target;
             _weaponState = WeaponState.Firing;
             _timer = FireTime;
-            _ammo--;
-            AmmoChangeEvent?.Invoke(_ammo, Ammo);
+            Ammo--;
+            AmmoChangeEvent?.Invoke(Ammo, MaxAmmo);
             ShootBullet();
         }
         private void ShootBullet()

@@ -26,7 +26,7 @@ namespace Controllers
 		public event Action<float> BaseHealthChangeEvent;
 		public event Action<float> PlayerHealthChangeEvent;
 
-		public Character Player { get; set; }
+		public Player Player { get; set; }
         private readonly List<GameObject> _objects = new List<GameObject>();
         public Base Base { get; set; }
 

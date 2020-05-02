@@ -7,7 +7,8 @@ namespace Objects
     {
         public Movement Movement;
         public Health Health;
-        public Weapon Weapon;
+        public Behaviour Behaviour;
+
 
         private void OnEnable()
         {
@@ -23,15 +24,7 @@ namespace Objects
         {
             Destroy(gameObject);
         }
-        public void Fire(GameObject target)
-        {
-            if (Weapon == null)
-                return;
-            transform.rotation = Quaternion.LookRotation(target.transform.position);
-            transform.Rotate(new Vector3(0, 135f, 0));
-            Weapon.Fire(target);
-
-        }
+        
       
     }
 }

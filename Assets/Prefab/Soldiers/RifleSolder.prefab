@@ -1,5 +1,63 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1657408543806982057
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7984928996803739439}
+  - component: {fileID: 5675830891602293025}
+  - component: {fileID: 3229062356692743979}
+  m_Layer: 2
+  m_Name: AttackRange
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7984928996803739439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1657408543806982057}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -14.48, z: -0.05}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2687636474857757291}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &5675830891602293025
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1657408543806982057}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 14.292044
+  m_Center: {x: 0, y: 13.792044, z: 0}
+--- !u!114 &3229062356692743979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1657408543806982057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f348e3ebf9743da4ba052a02bbfa6a0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Weapon: {fileID: 6788035594622136438}
 --- !u!1 &2687636473576024710
 GameObject:
   m_ObjectHideFlags: 0
@@ -11,7 +69,7 @@ GameObject:
   - component: {fileID: 2687636473576024708}
   - component: {fileID: 2687636473576024709}
   m_Layer: 0
-  m_Name: ShotgunSoldier
+  m_Name: RifleSoldier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,10 +154,10 @@ GameObject:
   - component: {fileID: 2687636474857757294}
   - component: {fileID: 2687636474857757295}
   - component: {fileID: 2687636474857757296}
-  - component: {fileID: 2687636474857757289}
   - component: {fileID: 2687636474857757288}
+  - component: {fileID: 5966668141508140143}
   m_Layer: 0
-  m_Name: Player
+  m_Name: RifleSolder
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -118,6 +176,7 @@ Transform:
   m_Children:
   - {fileID: 2687636473576024708}
   - {fileID: 5424456689016655735}
+  - {fileID: 7984928996803739439}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -233,21 +292,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Agent: {fileID: 2687636474857757295}
   Speed: 10
---- !u!114 &2687636474857757289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2687636474857757297}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45089c6b8b23e494e8e65638aecc0735, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Movement: {fileID: 2687636474857757296}
-  Health: {fileID: 2687636474857757288}
-  Weapon: {fileID: 6788035594622136438}
 --- !u!114 &2687636474857757288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,7 +304,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5cb987dd1959b649b19a66ed619eaa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hitpoints: 40.7
+  Hitpoints: 26.4
+--- !u!114 &5966668141508140143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2687636474857757297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8fe896026acc7444b2bea14dd2d2b18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Movement: {fileID: 2687636474857757296}
+  Health: {fileID: 2687636474857757288}
+  Behaviour: {fileID: 3229062356692743979}
+  Weapon: {fileID: 6788035594622136438}
 --- !u!1 &7608533085574139625
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,13 +345,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7608533085574139625}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2687636474857757291}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &6788035594622136438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -306,6 +366,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 20
   Bullet: {fileID: 8999701172134916697, guid: 90ad6bb69261d6b4cad5285e5726c6db, type: 3}
-  ReloadTime: 5
-  FireTime: 0.3
-  Ammo: 30
+  ReloadTime: 3
+  FireTime: 0.1
+  MaxAmmo: 30

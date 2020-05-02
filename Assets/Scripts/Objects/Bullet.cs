@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 namespace Objects
 {
     public class Bullet : MonoBehaviour
@@ -8,30 +9,16 @@ namespace Objects
         public float Damage = 10f;
         public Rigidbody Rigidbody;
 
-        private float _timer;
-        private GameObject _target;
-
-        public void SetTarget(GameObject target)
+        protected float _timer;
+        protected GameObject _target;
+        public virtual void SetTarget(GameObject target)
         {
             _target = target;
         }
-    
-
-        private void FixedUpdate()
-        {
-            if (_target == null)
-                return;
-            Vector3 destination = _target.transform.position;
-            Vector3 direction = (_target.transform.position - transform.position).normalized;
-            if (Vector3.Distance(destination, transform.position) <= 0.2f)
-                DamageTarget();
-            gameObject.transform.position += direction * Speed * Time.deltaTime;
-        }
-
-        private void DamageTarget()
+        protected void DamageTarget(GameObject target)
         {
             {
-                if (_target.gameObject.GetComponent<Enemy>()!=null)
+                if (_target.gameObject.GetComponent<Enemy>() != null)
                 {
                     var health = _target.gameObject.GetComponentInParent<Health>();
                     if (health != null)
@@ -39,6 +26,23 @@ namespace Objects
                     Destroy(gameObject);
                 }
             }
+        }
+        private void OnTriggerEnter(Collider other)
+        {
+
+            if (_target != null)
+                return;
+            var enemy = other.gameObject.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+
+                var health = enemy.gameObject.GetComponentInParent<Health>();
+                if (health != null)
+                    health.Damage(Damage);
+                Destroy(gameObject);
+
+            }
+
         }
     }
 }

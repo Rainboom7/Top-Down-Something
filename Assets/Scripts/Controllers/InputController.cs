@@ -8,8 +8,8 @@ namespace Controllers
     public class InputController : MonoBehaviour
     {
 
-        private Character _player;
-        public void SetPlayer(Character player)
+        private Player _player;
+        public void SetPlayer(Player player)
         {
 
             _player = player;

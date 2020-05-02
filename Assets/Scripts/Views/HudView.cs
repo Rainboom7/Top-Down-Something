@@ -1,5 +1,6 @@
 ﻿using Controllers;
 using Objects;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +18,9 @@ namespace Views
         public Text HitpointsText;
         public Text AmmoText;
 
-		private Character _playerCharacter;
+
+        private Character _playerCharacter;
+        public Action<int> SelectPlayerEvent;
 
 		public void SetBaseHealth(float value)
 		{
@@ -31,6 +34,10 @@ namespace Views
         public void SetAmmo(int currentAmmo, int maxAmmo)
         {
             AmmoText.text = currentAmmo.ToString() + '/' + maxAmmo.ToString();
+
+        }
+        public void SelectPlayer(int index) {
+            SelectPlayerEvent?.Invoke(index);
 
         }
 		public IEndGameView EndGameView => _endGameView;

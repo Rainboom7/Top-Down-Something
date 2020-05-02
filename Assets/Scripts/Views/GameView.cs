@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Controllers;
 using Objects;
 using UnityEngine;
@@ -8,12 +9,14 @@ namespace Views
 	public class GameView : MonoBehaviour, IGameView
 	{
 		public GameController Controller;
-		public Character PlayerPrefab;
-		public Transform PlayerStartPoint;
+        public List<Player> PlayerPrefab;
+        public List<Player> ActivePlayers;
+        public Transform PlayerStartPoint;
 		public InputController InputController;
 		public FollowCamera FollowCamera;
         public GameObject[] GameObjects;
         public Base Base;
+        public PatrolController PatrolController;
 
 		[SerializeField]
 		public MenuView _menuView;
@@ -26,47 +29,81 @@ namespace Views
 
         private void OnEnable()
 		{
-			Controller.OnOpen(this);
-		}
+            if (PlayerPrefab != null)
+                ActivePlayers = new List<Player>();
+            Controller.OnOpen(this);
 
-		private void OnDisable()
-		{
-			Controller.OnClose(this);
-		}
+        }
 
-
-        private void SpawnPlayer()
+        private void OnDisable()
         {
-            Debug.Log(gameObject.name);
-            if (Controller.Player != null)
-                Destroy(Controller.Player);
-            Controller.Player = null;
-            var player = Instantiate(PlayerPrefab, PlayerStartPoint.position, PlayerStartPoint.rotation);
+            Controller.OnClose(this);
+        }
+
+        private void SetPlayer(int index) {
+            if (index < 0 && index > ActivePlayers.Capacity)
+                return;
+
+
+            var player = Controller.Player;
+            if (player != null && player.Health != null)
+            {
+                player.Health.DieEvent -= OnPlayerDead;
+                player.Health.ChangeHealthEvent -= OnPlayerHealthChange;
+                if (player.Weapon != null)
+                    player.Weapon.AmmoChangeEvent -= OnAmmoChange;
+            }
+
+            player = ActivePlayers[index];
+            PatrolController?.StartPatroling();
             if (player == null)
                 return;
+            player.Movement?.StopPatrol();
+            if(player.Behaviour!=null)
+                 player.Behaviour.IsPlayer = true;
             var health = player.Health;
             if (health == null)
                 return;
-
             if (player.Weapon == null)
                 return;
             player.Weapon.AmmoChangeEvent += OnAmmoChange;
-
             InputController.SetPlayer(player);
             FollowCamera.Target = player.transform;
             Controller.Player = player;
-            Controller.AddObject(player.gameObject);
+        
 
             health.DieEvent += OnPlayerDead;
             health.ChangeHealthEvent += OnPlayerHealthChange;
-            OnPlayerHealthChange(health.Hitpoints);
-            OnAmmoChange(player.Weapon.Ammo, player.Weapon.Ammo);
+            OnPlayerHealthChange(health.Currenthealth);
+            OnAmmoChange(player.Weapon.Ammo, player.Weapon.MaxAmmo);
+
         }
+
+
+        private void SpawnPlayers()
+        {
+
+            if (Controller.Player != null)
+                Destroy(Controller.Player);
+            Controller.Player = null;
+            for (int i = 0; i < PlayerPrefab.Capacity; i++)
+            {
+                ActivePlayers.Add(Instantiate(PlayerPrefab[i], PlayerStartPoint.position + new Vector3(0, 0, 0.5f * i), PlayerStartPoint.rotation));
+                Controller.AddObject(ActivePlayers[i].gameObject);
+            }
+            if(PatrolController!=null)
+                PatrolController.Patrolers = ActivePlayers;
+        }
+           
+        
 
 
 		public void StartGame()
 		{
-            SpawnPlayer();
+
+            _hudView.SelectPlayerEvent += SetPlayer;
+            SpawnPlayers();
+            SetPlayer(0);
             Base.Health.DieEvent += OnPlayerDead;
             Base.Health.ChangeHealthEvent += OnBaseHealthChange;
             Controller.Base = Base;
@@ -87,7 +124,8 @@ namespace Views
 
 
             }
-            
+            if (ActivePlayers != null)
+                ActivePlayers.Clear();
             if (Base != null)
             {
                 Base.Health.ChangeHealthEvent -= OnBaseHealthChange;
