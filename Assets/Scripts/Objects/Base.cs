@@ -7,12 +7,13 @@ namespace Objects
     public class Base : MonoBehaviour, IPunObservable
     {
         public Health Health;
-        private float _correcthealth=-1;
-        private void Update()
+        private float _correcthealth = -1;
+        private void OnEnable()
         {
-            
-            if (_correcthealth == -1)
-                return;
+            _correcthealth = Health.Hitpoints;
+        }
+        private void Update()
+        {                 
             Health.SetHp(_correcthealth);
         }
 
@@ -26,7 +27,6 @@ namespace Objects
             }
             else
             {
-                Debug.Log(Health.Currenthealth);
                 _correcthealth = Mathf.Max((float)stream.ReceiveNext(),0f);
             }
         }
