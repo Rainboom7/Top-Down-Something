@@ -344,7 +344,6 @@ MonoBehaviour:
   Line: {fileID: 124010336273990390}
   Text: {fileID: 0}
   Hitpoints: 106.1
-  PhotonView: {fileID: -6908594334395712624}
 --- !u!114 &2441015075425281350
 MonoBehaviour:
   m_ObjectHideFlags: 0

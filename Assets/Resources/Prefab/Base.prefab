@@ -229,7 +229,6 @@ MonoBehaviour:
   Line: {fileID: 3192135265660760895}
   Text: {fileID: 1375673252282539214}
   Hitpoints: 63.5
-  PhotonView: {fileID: 9113228091581056642}
 --- !u!114 &5113113167551915002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,7 +261,7 @@ MonoBehaviour:
   Synchronization: 2
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 5353268660110146187}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

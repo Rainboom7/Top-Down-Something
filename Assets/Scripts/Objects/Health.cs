@@ -15,7 +15,6 @@ namespace Objects
         private Vector2 _healthSize;
         [Range(0, 200)]
         public float Hitpoints;
-        public PhotonView PhotonView;
         public float Currenthealth { get; set; }
         private void OnEnable()
         {
@@ -40,13 +39,8 @@ namespace Objects
 
 
         }
-        public void ChangeView()
-        {
-            PhotonView?.RPC("ChangeViewRPC", RpcTarget.AllBuffered);
-        }
-
-        [PunRPC]
-        private void ChangeViewRPC()
+     
+        private void ChangeView()
         {
             Line.localScale *= Currenthealth / Hitpoints;
             if(Text!=null)

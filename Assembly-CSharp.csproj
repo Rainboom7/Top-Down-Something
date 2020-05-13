@@ -102,6 +102,7 @@
     <Compile Include="Assets\Scripts\Views\EndGameView.cs" />
     <Compile Include="Assets\Scripts\Views\GameView.cs" />
     <Compile Include="Assets\Scripts\Views\HudView.cs" />
+    <Compile Include="Assets\Scripts\Views\LobbyView.cs" />
     <Compile Include="Assets\Scripts\Views\MenuView.cs" />
     <Compile Include="Assets\Scripts\Views\PlayerScoreView.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />

@@ -12,7 +12,7 @@ using Photon.Pun.UtilityScripts;
 namespace Controllers
 {
     public class NetworkManager : MonoBehaviourPunCallbacks
-    {  
+    {
         public GameController Controller;
         [HideInInspector]
         public string PlayerPrefabPath;
@@ -22,6 +22,7 @@ namespace Controllers
         public GameObject LoadingText;
         public MenuView MainMenu;
         public HudView HudView;
+        public LobbyView LobbyView;
         private Coroutine _scoreCoroutine;
 
         private List<PlayerController> _players = new List<PlayerController>();
@@ -30,23 +31,24 @@ namespace Controllers
         public void Start()
         {
             PhotonNetwork.ConnectUsingSettings();
+            LobbyView.BeginGameAction += OnGameStart;
 
         }
-        
+
         public bool IsPlayerSelected()
         {
             return (!PlayerPrefabPath.Equals(""));
         }
         public override void OnCreatedRoom()
         {
-            Controller.Base = PhotonNetwork.Instantiate(BasePrefabPath, BasePoint.transform.position, Quaternion.Euler(90f,0,0)).GetComponentInChildren<Base>();
-            Controller.NewGame();
+
         }
+
+        [PunRPC]
         private void Spawn()
         {      
             Debug.Log(PhotonNetwork.CurrentRoom);
             GameObject player = PhotonNetwork.Instantiate(PlayerPrefabPath, transform.position, Quaternion.identity);
-            PlayerController playerController = player.GetComponent<PlayerController>();
         }
         public override void OnJoinedLobby()
         {
@@ -54,10 +56,17 @@ namespace Controllers
         }
         public override void OnJoinedRoom()
         {
+            LobbyView.gameObject.SetActive(true);
+            LobbyView.AddPlayer(PlayerPrefs.GetString("PlayerName"));
             Debug.Log("OnJoinedRoom");
             base.OnJoinedRoom();
-            _scoreCoroutine= StartCoroutine(UpdateScore());
-            Spawn();
+           
+        }
+        public void OnGameStart() {
+            _scoreCoroutine = StartCoroutine(UpdateScore());
+           photonView.RPC("Spawn", RpcTarget.All);
+            Controller.Base = PhotonNetwork.Instantiate(BasePrefabPath, BasePoint.transform.position, Quaternion.Euler(90f, 0, 0)).GetComponentInChildren<Base>();
+            Controller.NewGame();
         }
         public override void OnCreateRoomFailed(short returnCode, string message)
         {
