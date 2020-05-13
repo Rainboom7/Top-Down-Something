@@ -59,7 +59,8 @@ namespace Objects
                 var health = enemy.gameObject.GetComponentInParent<Health>();
                 if (health != null)
                     health.Damage(Damage);
-                PhotonNetwork.Destroy(gameObject);
+                if(PhotonView.IsMine)
+                    PhotonNetwork.Destroy(gameObject);
 
             }
 

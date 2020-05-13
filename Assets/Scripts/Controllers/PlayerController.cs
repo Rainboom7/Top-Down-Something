@@ -69,13 +69,10 @@ namespace Controllers
             _healthPoints = Health.Hitpoints;
             _ammo = Weapon.MaxAmmo;
             Weapon.SetAmmo(_ammo);
-
             if (PhotonView.IsMine)
                 Controller.FollowCamera.Target = transform;
             PlayerName = (string)PhotonView.Controller.CustomProperties["PlayerName"];
             Controller.NetworkManager.AddPlayer(this);
-
-
         }
 
         private void Update()

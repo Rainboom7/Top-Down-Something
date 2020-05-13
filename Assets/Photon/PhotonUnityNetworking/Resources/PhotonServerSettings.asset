@@ -40,6 +40,8 @@ MonoBehaviour:
   - AddScoreRPC
   - MasterDestory
   - MasterDestroy
+  - ChangeView
+  - ChangeViewRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

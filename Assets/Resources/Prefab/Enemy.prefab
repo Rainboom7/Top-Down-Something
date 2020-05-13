@@ -243,7 +243,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Line: {fileID: 1299050981493107048}
+  Text: {fileID: 0}
   Hitpoints: 9.6
+  PhotonView: {fileID: 7209150240060629488}
 --- !u!54 &1331096587926105232
 Rigidbody:
   m_ObjectHideFlags: 0

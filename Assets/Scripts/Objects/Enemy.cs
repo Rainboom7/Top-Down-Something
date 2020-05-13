@@ -80,13 +80,13 @@ namespace Objects
             {
                 var health = collision.gameObject.GetComponent<Health>();
                 health?.Damage(DamageToPlayer);
-                PhotonNetwork.Destroy(gameObject);
+                PhotonView.RPC("MasterDestroy", RpcTarget.MasterClient);
             }
             if (collision.gameObject.GetComponent<Base>() != null)
             {
                 var health = collision.gameObject.GetComponent<Health>();
                 health?.Damage(DamageToBase);
-                PhotonNetwork.Destroy(gameObject);
+                PhotonView.RPC("MasterDestroy", RpcTarget.MasterClient);
             }
         }
 
