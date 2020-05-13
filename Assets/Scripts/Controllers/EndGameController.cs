@@ -37,7 +37,7 @@ namespace Controllers
         private void OnReplay()
         {
             _view?.Close(this);
-            _game.NewGame();
+        //    _game.NewGame();
         }
     }
 }

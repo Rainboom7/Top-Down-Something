@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 namespace Objects
 {
     public  class Weapon : MonoBehaviour
@@ -13,19 +15,23 @@ namespace Objects
             None
         }
         public float Damage;
-        public event Action<int,int> AmmoChangeEvent;
+        public Text AmmoText;
         private WeaponState _weaponState;
         public Bullet Bullet;
         public float ReloadTime;
         public float FireTime;
         public int MaxAmmo;
         private float _timer;
-        public int Ammo { get; private set; }
-        private GameObject _taget;
+        public int Ammo { get;  set; }
+        private Vector3 _taget;
         private void OnEnable()
         {
             _weaponState = WeaponState.None;
             Ammo = MaxAmmo;
+        }
+        public void SetAmmo(int ammo) {
+            Ammo = ammo;
+            ChangeAmmoView();
         }
 
         private void Update()
@@ -44,37 +50,46 @@ namespace Objects
                     _weaponState = WeaponState.None;
                     _timer = 0f;
                     Ammo = MaxAmmo;
-                    AmmoChangeEvent?.Invoke(Ammo, MaxAmmo);
+                    ChangeAmmoView();
                 }
             }
             
         }
 
-        public void Fire(GameObject target )
+        public bool Fire()
         {
             if (_weaponState != WeaponState.None)
-                return;
+                return false;
             if (Ammo < 1)
             {
                 Reload();
-                return;
+                return false;
             }
-            _taget = target;
             _weaponState = WeaponState.Firing;
             _timer = FireTime;
             Ammo--;
-            AmmoChangeEvent?.Invoke(Ammo, MaxAmmo);
-            ShootBullet();
+            ChangeAmmoView();
+            return true;
         }
-        private void ShootBullet()
-        {
-            var bullet = Instantiate(Bullet, transform.position, transform.rotation);
-            bullet?.SetTarget(_taget);
-        }
+
         private void Reload()
         {
             _timer = ReloadTime;
             _weaponState = WeaponState.Reloading;
+            ChangeAmmoView();
+        }
+        private void ChangeAmmoView() {
+
+            if (AmmoText != null)
+            {
+                if (_weaponState == WeaponState.Reloading)
+                    AmmoText.text = "Realoading";
+                else
+                    AmmoText.text = Ammo + " / " + MaxAmmo;
+
+            }
+                
+
         }
 
     }

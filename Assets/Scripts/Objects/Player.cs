@@ -7,12 +7,12 @@ namespace Objects
     public class Player : Character
     {
         public Weapon Weapon;
-        public void Fire(GameObject target)
+        public bool Fire(Vector3 target)
         {
             if (Weapon == null)
-                return;
-            transform.rotation = Quaternion.LookRotation(target.transform.position);
-            Weapon.Fire(target);
+                return false;
+            transform.rotation = Quaternion.LookRotation(target);
+            return Weapon.Fire();
 
         }
 

@@ -20,7 +20,7 @@ namespace Objects
             if (Health != null)
                 Health.DieEvent -= OnDeath;
         }
-        private void OnDeath()
+        private void OnDeath( )
         {
             Destroy(gameObject);
         }

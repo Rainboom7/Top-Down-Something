@@ -16,7 +16,7 @@ namespace Objects
         }
         private void Update()
         {
-            if (IsPlayer)
+          /*  if (IsPlayer)
                 return;
             if (_timer > 0)
                 _timer -= Time.deltaTime;
@@ -26,6 +26,7 @@ namespace Objects
                 if (Weapon != null && _target != null)
                     Weapon.Fire(_target);
             }
+            */
             
         }
     }

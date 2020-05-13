@@ -6,24 +6,39 @@ namespace Objects
 {
     public class Health : MonoBehaviour
     {
+        public RectTransform Line;
         public event Action DieEvent;
-        public event Action<float> ChangeHealthEvent;
+        private Vector2 _healthSize;
         [Range(0, 200)]
         public float Hitpoints;
-        public float Currenthealth { get; private set; }
+        public float Currenthealth { get;  set; }
         private void OnEnable()
         {
             Currenthealth = Hitpoints;
+      
         }
 
         public void Damage(float damage)
         {
+
             Currenthealth -= damage;
             if (Currenthealth <= 0)
                 DieEvent?.Invoke();
-            ChangeHealthEvent?.Invoke(Currenthealth);
+            ChangeView();
+        }
+        public void SetHp(float points) {
+            Currenthealth = points;
+            if (Currenthealth <= 0)
+                DieEvent?.Invoke();
+            ChangeView();
+
+        }
+        private void ChangeView()
+        {
+            Line.localScale *= Currenthealth / Hitpoints;
         }
 
 
     }
+
 }

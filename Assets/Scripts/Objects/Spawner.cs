@@ -1,22 +1,23 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Objects
 {
-    public class Spawner : MonoBehaviour
+    public class Spawner : MonoBehaviour,IPunObservable
     {
         [Range(0.5f, 10)]
         public float SpawnTime;
-        public Enemy Prefab;
+        public string EnemyPrefabPath;
         public Controllers.GameController GameController;
 
         private float _timer;
         private Coroutine _spawnRoutine;
+        public event Action<string, int> AddScoreEvent;
         private void OnEnable()
-        {
-            if (GameController != null)
-                Prefab.Base = GameController.Base;
+        {          
             _spawnRoutine = StartCoroutine(SpawnRoutine);
         }
     
@@ -28,6 +29,12 @@ namespace Objects
                 _spawnRoutine = null;
             }
         }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            
+        }
+
         private IEnumerator SpawnRoutine
         {
             get
@@ -35,9 +42,14 @@ namespace Objects
                 yield return new WaitForSeconds(SpawnTime);
                 while(true)
                 {
-                    var obj = Instantiate(Prefab, transform.position, transform.rotation);
-                    if(obj!=null)
+                    var obj = PhotonNetwork.InstantiateSceneObject(EnemyPrefabPath, transform.position, transform.rotation);
+                    if (obj != null)
+                    {
                         GameController.AddObject(obj.gameObject);
+                        Enemy enemy = obj.GetComponent<Enemy>();
+                        enemy.Base = GameController.Base;
+                        enemy.GiveScoreEvent += AddScoreEvent;
+                    }
                     yield return new WaitForSeconds(SpawnTime);
 
             

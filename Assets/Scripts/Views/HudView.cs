@@ -1,45 +1,37 @@
 ﻿using Controllers;
 using Objects;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Realtime;
+using Photon.Pun.UtilityScripts;
 
 namespace Views
 {
 	public class HudView : BaseView<IHudView>, IHudView
 	{
-		protected override IHudView View => this;
-
-		[SerializeField]
-		private EndGameView _endGameView;
-
-		public Text BaseHealthtext;
-        public Text HitpointsText;
-        public Text AmmoText;
-
-
-        private Character _playerCharacter;
-        public Action<int> SelectPlayerEvent;
-
-		public void SetBaseHealth(float value)
-		{
-			BaseHealthtext.text = value.ToString();
-		}
-
-        public void SetHealth(float value)
+        protected override IHudView View => this;
+        public List<PlayerScoreView> PlayerInfos;
+        private int _currentPlayer=0;
+        public void UpdateBoard(List<Photon.Realtime.Player> newPlayerList)
         {
-            HitpointsText.text = value.ToString();
+            for (int i = 0; i < PlayerInfos.Capacity&&i<newPlayerList.Capacity; i++)
+            {
+                PlayerInfos[i].Name = newPlayerList[i].NickName;
+                PlayerInfos[i].Score = ScoreExtensions.GetScore(newPlayerList[i]);
+                PlayerInfos[i].UpdateView();
+            }
         }
-        public void SetAmmo(int currentAmmo, int maxAmmo)
+        public void AddPlayer(string name)
         {
-            AmmoText.text = currentAmmo.ToString() + '/' + maxAmmo.ToString();
-
+            PlayerScoreView playerScore = PlayerInfos[_currentPlayer];
+            playerScore.Name = name;
+            playerScore.Score = 0;
+            playerScore.UpdateView();
+            _currentPlayer++;
         }
-        public void SelectPlayer(int index) {
-            SelectPlayerEvent?.Invoke(index);
-
-        }
-		public IEndGameView EndGameView => _endGameView;
+        
 	}
 }
