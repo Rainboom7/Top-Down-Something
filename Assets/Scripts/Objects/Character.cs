@@ -7,24 +7,6 @@ namespace Objects
     {
         public Movement Movement;
         public Health Health;
-        public Behaviour Behaviour;
-
-
-        private void OnEnable()
-        {
-            if (Health != null)
-                Health.DieEvent += OnDeath;
-        }
-        private void OnDisable()
-        {
-            if (Health != null)
-                Health.DieEvent -= OnDeath;
-        }
-        private void OnDeath( )
-        {
-            Destroy(gameObject);
-        }
-        
-      
+        public Behaviour Behaviour; 
     }
 }

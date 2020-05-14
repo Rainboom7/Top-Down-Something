@@ -10,28 +10,28 @@ using Photon.Pun.UtilityScripts;
 
 namespace Views
 {
-	public class HudView : BaseView<IHudView>, IHudView
+	public class HudView : BaseView, IHudView
 	{
-        protected override IHudView View => this;
         public List<PlayerScoreView> PlayerInfos;
-        private int _currentPlayer=0;
+        private int _currentPlayer = 0;
         public void UpdateBoard(List<Photon.Realtime.Player> newPlayerList)
         {
-            for (int i = 0; i < PlayerInfos.Capacity&&i<newPlayerList.Capacity; i++)
+            int i;
+            for (i=0; i < PlayerInfos.Capacity && i < newPlayerList.Capacity; i++)
             {
                 PlayerInfos[i].Name = newPlayerList[i].NickName;
                 PlayerInfos[i].Score = ScoreExtensions.GetScore(newPlayerList[i]);
                 PlayerInfos[i].UpdateView();
             }
+            while (i <= 3)
+            {
+                PlayerInfos[i].Name = "";
+                PlayerInfos[i].Score = -1;
+                PlayerInfos[i].UpdateView();
+                i++;
+            }
         }
-        public void AddPlayer(string name)
-        {
-            PlayerScoreView playerScore = PlayerInfos[_currentPlayer];
-            playerScore.Name = name;
-            playerScore.Score = 0;
-            playerScore.UpdateView();
-            _currentPlayer++;
-        }
+      
         
 	}
 }

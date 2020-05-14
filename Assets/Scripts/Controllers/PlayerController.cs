@@ -53,11 +53,16 @@ namespace Controllers
                     transform.position = _correctPosition;
                     transform.rotation = _correctRotation;
                     Rigidbody.velocity = _correctVelocity;
-                    Health.Currenthealth = _healthPoints;
+                    Health.SetHp(_healthPoints);
                     Weapon.Ammo = _ammo;
                     _firstData = false;
                 }
             }
+        }
+        private void OnDestroy()
+        {
+            Health.DieEvent -= Die;
+
         }
 
         private void OnEnable()
@@ -69,6 +74,8 @@ namespace Controllers
             _healthPoints = Health.Hitpoints;
             _ammo = Weapon.MaxAmmo;
             Weapon.SetAmmo(_ammo);
+            Health.SetHp(_healthPoints);
+            Health.DieEvent += Die;
             if (PhotonView.IsMine)
                 Controller.FollowCamera.Target = transform;
             PlayerName = (string)PhotonView.Controller.CustomProperties["PlayerName"];
@@ -105,11 +112,12 @@ namespace Controllers
                 transform.position = Vector3.Lerp(transform.position, _correctPosition, Time.deltaTime * 5f);
                 transform.rotation = Quaternion.Lerp(transform.rotation, _correctRotation, Time.deltaTime * 5f);
                 Rigidbody.velocity = Vector3.Lerp(Rigidbody.velocity, _correctVelocity, Time.deltaTime * 5f);
-                Health.SetHp(_healthPoints);
+              //  Health.SetHp(_healthPoints);
                 Weapon.SetAmmo(_ammo);
             }
         }
-        private void Fire(RaycastHit hit) {
+        private void Fire(RaycastHit hit)
+        {
             if (Player == null)
                 return;
             if (Player.Fire(hit.point))
@@ -117,8 +125,16 @@ namespace Controllers
                 GameObject prefab = PhotonNetwork.Instantiate(BulletPrefab, transform.position, Quaternion.Euler(90, 0, 0));
                 Bullet bullet = prefab.gameObject.GetComponent<Bullet>();
                 bullet?.SetTarget(hit.point);
-                bullet?.SetShooter(PlayerName);
+                bullet.SetShooter(PhotonNetwork.LocalPlayer.NickName);
             }
+        }
+        public void Damage(float value)
+        {
+            Health?.Damage(value);
+        }
+        public void Die() {
+            if (PhotonView.IsMine)
+                Destroy(gameObject);
         }
     }
 }

@@ -32,17 +32,15 @@ MonoBehaviour:
   StartInOfflineMode: 0
   RpcList:
   - ClickRpc
+  - DamageRPC
   - DestroyRpc
   - DestroySpaceship
+  - DieRPC
   - Fire
+  - OnGameStartRPC
+  - SetKillerRpc
   - RespawnSpaceship
-  - AddPlayerHudRPC
-  - AddScoreRPC
-  - MasterDestory
-  - MasterDestroy
-  - ChangeView
-  - ChangeViewRPC
-  - Spawn
+  - OnGameEndRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

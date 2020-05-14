@@ -23,6 +23,7 @@ namespace Controllers
         public MenuView MainMenu;
         public HudView HudView;
         public LobbyView LobbyView;
+        public EndGameView EndGameView;
         private Coroutine _scoreCoroutine;
 
         private List<PlayerController> _players = new List<PlayerController>();
@@ -32,7 +33,8 @@ namespace Controllers
         {
             PhotonNetwork.ConnectUsingSettings();
             LobbyView.BeginGameAction += OnGameStart;
-
+            LobbyView.LeaveLobbyEvent += LeaveLobby;
+            EndGameView.LeaveEvent += LeaveLobby;
         }
 
         public bool IsPlayerSelected()
@@ -43,12 +45,18 @@ namespace Controllers
         {
 
         }
+        public void LeaveLobby() {
+            PhotonNetwork.LeaveRoom();
+            MainMenu.Open();
+        }
 
-        [PunRPC]
+
         private void Spawn()
-        {      
+        {
             Debug.Log(PhotonNetwork.CurrentRoom);
-            GameObject player = PhotonNetwork.Instantiate(PlayerPrefabPath, transform.position, Quaternion.identity);
+            int shiftValue = UnityEngine.Random.Range(1, 3);
+            Vector3 shift = new Vector3(shiftValue, 0, shiftValue);
+            GameObject player = PhotonNetwork.Instantiate(PlayerPrefabPath, transform.position + shift, Quaternion.identity);
         }
         public override void OnJoinedLobby()
         {
@@ -56,22 +64,62 @@ namespace Controllers
         }
         public override void OnJoinedRoom()
         {
-            LobbyView.gameObject.SetActive(true);
-            LobbyView.AddPlayer(PlayerPrefs.GetString("PlayerName"));
+            LobbyView.Open();
+            LobbyView.UpdateLobby(PhotonNetwork.PlayerList);
             Debug.Log("OnJoinedRoom");
             base.OnJoinedRoom();
-           
+
         }
-        public void OnGameStart() {
+
+        public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
+        {
+            LobbyView.UpdateLobby(PhotonNetwork.PlayerList);
+
+        }
+        public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)
+        {
+            LobbyView.UpdateLobby(PhotonNetwork.PlayerList);
+        }
+        public void OnGameStart()
+        {
+            photonView.RPC("OnGameStartRPC", RpcTarget.All);
+        }
+        [PunRPC]
+        public void OnGameStartRPC()
+        {
+            LobbyView.Close();
+            HudView.Open();
+            Spawn();
             _scoreCoroutine = StartCoroutine(UpdateScore());
-           photonView.RPC("Spawn", RpcTarget.All);
-            Controller.Base = PhotonNetwork.Instantiate(BasePrefabPath, BasePoint.transform.position, Quaternion.Euler(90f, 0, 0)).GetComponentInChildren<Base>();
-            Controller.NewGame();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                Controller.Base = PhotonNetwork.Instantiate(BasePrefabPath, BasePoint.transform.position, Quaternion.identity).GetComponent<Base>();
+                Controller.Base.Health.DieEvent += OnGameEnd;
+                Controller.NewGame();
+            }
+        }
+        public void OnGameEnd()
+        {
+            photonView.RPC("OnGameEndRPC", RpcTarget.All);
+        }
+        [PunRPC]
+        public void OnGameEndRPC()
+        {
+            HudView.Close();
+            EndGameView.EndGame(new List<Photon.Realtime.Player>(PhotonNetwork.PlayerList));
+            ScoreExtensions.SetScore(PhotonNetwork.LocalPlayer, 0);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                Controller.Base.Health.DieEvent -= OnGameEnd;
+                Controller.StopGame();
+                PhotonNetwork.DestroyAll();  
+            }
         }
         public override void OnCreateRoomFailed(short returnCode, string message)
         {
             Debug.Log("OnCreateRoomFailed");
             base.OnCreateRoomFailed(returnCode, message);
+            MainMenu.Open();
 
         }
         public override void OnConnectedToMaster()
@@ -85,6 +133,7 @@ namespace Controllers
         {
             Debug.Log("OnJoinRandomFailed :" + message);
             base.OnJoinRandomFailed(returnCode, message);
+            MainMenu.Open();
 
         }
         public override void OnLeftRoom()
@@ -111,12 +160,20 @@ namespace Controllers
                 PhotonNetwork.LeaveRoom();
             PhotonNetwork.LocalPlayer.CustomProperties["PlayerName"] = PlayerPrefs.GetString("PlayerName");
             PhotonNetwork.LocalPlayer.NickName = PlayerPrefs.GetString("PlayerName");
-            PhotonNetwork.CreateRoom(room);
+            string heroName = PlayerPrefs.GetString("Hero");
+            heroName = heroName.Substring(heroName.LastIndexOf('/')+1);
+            PhotonNetwork.LocalPlayer.CustomProperties["Hero"] = heroName;
+            RoomOptions options = new RoomOptions();
+            options.MaxPlayers = 4;
+            PhotonNetwork.CreateRoom(room,options);
         }
         public void ConnectToRandomRoom()
         {
             PhotonNetwork.LocalPlayer.CustomProperties["PlayerName"] = PlayerPrefs.GetString("PlayerName");
             PhotonNetwork.LocalPlayer.NickName = PlayerPrefs.GetString("PlayerName");
+            string heroName = PlayerPrefs.GetString("Hero");
+            heroName = heroName.Substring(heroName.LastIndexOf('/')+1);
+            PhotonNetwork.LocalPlayer.CustomProperties["Hero"] = heroName;
             PhotonNetwork.JoinRandomRoom();
         }
         private IEnumerator UpdateScore()

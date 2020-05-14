@@ -20,7 +20,7 @@ namespace Objects
         public PhotonView PhotonView;
         public int ScoreCost = 20;
         private bool _firstData = false;
-        public string Killer = "NONE";
+        private Photon.Realtime.Player _killer;
         public float Speed = 10f;
         private float _healthPoints;
         private Vector3 _correctPosition = Vector3.zero;
@@ -31,35 +31,46 @@ namespace Objects
 
         private void OnEnable()
         {
+            _correctPosition = transform.position;
+            _correctRotation = transform.rotation;
+            _correctVelocity = Rigidbody.velocity;
+            _healthPoints = Health.Hitpoints;
             Movement.Speed = Speed;
             if (Base != null)
                 Movement.MovePosition(Base.transform.position);
             Health.DieEvent += Die;
         }
+
         private void OnDestroy()
         {
             Health.DieEvent -= Die;
         }
-        public void Die()
+        public void Damage(float value, Photon.Realtime.Player attacker)
         {
-            ScoreExtensions.AddScore(PhotonNetwork.LocalPlayer, ScoreCost);
-            Debug.Log(PhotonNetwork.LocalPlayer);
-            PhotonView.RPC("MasterDestroy", RpcTarget.MasterClient);
+            Health.Damage(value);
+            PhotonView.RPC("SetKillerRpc", RpcTarget.MasterClient, attacker);
         }
         [PunRPC]
-        public void MasterDestroy()
+        public void SetKillerRpc(Photon.Realtime.Player attacker)
         {
-            PhotonNetwork.Destroy(gameObject);
+            _killer = attacker;
         }
-
+        public void Die() {
+            ScoreExtensions.AddScore(_killer, ScoreCost);
+            PhotonView.RPC("DieRPC", RpcTarget.All);
+        }
+        [PunRPC]
+        public void DieRPC()
+        {            
+            Destroy(gameObject);
+        }
+        
         private void Update()
         {
-            if (!_firstData)
-                return;
-            transform.position = Vector3.Lerp(transform.position, _correctPosition, Time.deltaTime * 5f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, _correctRotation, Time.deltaTime * 5f);
-            Rigidbody.velocity = Vector3.Lerp(Rigidbody.velocity, _correctVelocity, Time.deltaTime * 5f);
-            Health.SetHp(_healthPoints);
+            if (!PhotonNetwork.IsMasterClient)
+            {            
+                Health.SetHp(_healthPoints);
+            }
         }
         public void ChangeTarget(GameObject target)
         {
@@ -78,15 +89,15 @@ namespace Objects
         {
             if (collision.gameObject.GetComponent<Player>()!=null)
             {
-                var health = collision.gameObject.GetComponent<Health>();
+                var health = collision.gameObject.GetComponent<PlayerController>();
                 health?.Damage(DamageToPlayer);
-                PhotonView.RPC("MasterDestroy", RpcTarget.MasterClient);
+                PhotonView.RPC("DieRPC", RpcTarget.All);
             }
             if (collision.gameObject.GetComponent<Base>() != null)
             {
                 var health = collision.gameObject.GetComponent<Health>();
                 health?.Damage(DamageToBase);
-                PhotonView.RPC("MasterDestroy", RpcTarget.MasterClient);
+                PhotonView.RPC("DieRPC", RpcTarget.All);
             }
         }
 
@@ -94,27 +105,25 @@ namespace Objects
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(transform.position);
-                stream.SendNext(transform.rotation);
-                stream.SendNext(Rigidbody.velocity);
+               //stream.SendNext(transform.position);
+              //  stream.SendNext(transform.rotation);
+              //  stream.SendNext(Rigidbody.velocity);
                 stream.SendNext(Health.Currenthealth);
-
             }
-            else
+            else if (stream.IsReading)
             {
-                _correctPosition = (Vector3)stream.ReceiveNext();
-                _correctRotation = (Quaternion)stream.ReceiveNext();
-                _correctVelocity = (Vector3)stream.ReceiveNext() * 0.5f;
+              ///  _correctPosition = (Vector3)stream.ReceiveNext();
+           //     _correctRotation = (Quaternion)stream.ReceiveNext();
+             //   _correctVelocity = (Vector3)stream.ReceiveNext() * 0.5f;
                 _healthPoints = (float)stream.ReceiveNext();
-
-                if (_firstData)
-                {
-                    transform.position = _correctPosition;
-                    transform.rotation = _correctRotation;
-                    Rigidbody.velocity = _correctVelocity;
-                    Health.Currenthealth = _healthPoints;
-                    _firstData = false;
-                }
+             //   if (_firstData)
+             //   {
+               //     transform.position = _correctPosition;
+               //     transform.rotation = _correctRotation;
+                 //   Rigidbody.velocity = _correctVelocity;
+                //    Health.SetHp(_healthPoints);
+                //    _firstData = false;
+              //  }
             }
         }
     }

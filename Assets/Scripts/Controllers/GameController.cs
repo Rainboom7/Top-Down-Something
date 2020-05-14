@@ -45,8 +45,13 @@ namespace Controllers
 
         public void NewGame()
         {
-            _view?.HudView?.Open(new HudController(this));
             _view?.StartGame();
+        }
+        public void StopGame() {
+            if (Base != null)
+                Destroy(Base.gameObject);
+            _view?.StopGame();
+
         }
         
 

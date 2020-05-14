@@ -39,13 +39,13 @@ namespace Controllers
 
         private void Choose(Player player)
         {
-            _view?.Close(this);
+            _view?.Close();
             _game.ChoosePlayer(player);
         }
         private void Start()
         {
 
-            _view?.Close(this);
+            _view?.Close();
             _game.NewGame();
 
         }

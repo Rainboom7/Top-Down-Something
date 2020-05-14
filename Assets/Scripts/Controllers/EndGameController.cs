@@ -7,7 +7,7 @@ namespace Controllers
 {
     public interface IEndGameView : IView
     {
-        event Action ReplayEvent;
+        event Action LeaveEvent;
 
     }
 
@@ -24,19 +24,19 @@ namespace Controllers
 
         public void OnOpen(IEndGameView view)
         {
-            view.ReplayEvent += OnReplay;
+            view.LeaveEvent += OnReplay;
             _view = view;
         }
 
         public void OnClose(IEndGameView view)
         {
-            view.ReplayEvent -= OnReplay;
+            view.LeaveEvent -= OnReplay;
             _view = null;
         }
 
         private void OnReplay()
         {
-            _view?.Close(this);
+            _view?.Close();
         //    _game.NewGame();
         }
     }

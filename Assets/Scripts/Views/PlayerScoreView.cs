@@ -15,7 +15,10 @@ namespace Views
         private Text _scoreText;
         public void UpdateView() {
             _nameText.text = Name;
-            _scoreText.text = Score.ToString();
+            if (Score == -1)
+                _scoreText.text = "";
+            else
+                _scoreText.text = Score.ToString();
 
         }
       

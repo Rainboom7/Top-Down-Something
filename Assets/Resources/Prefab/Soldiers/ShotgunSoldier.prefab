@@ -344,6 +344,7 @@ MonoBehaviour:
   Line: {fileID: 2494751697999623069}
   Text: {fileID: 0}
   Hitpoints: 28.6
+  PhotonView: {fileID: 4245048673601460118}
 --- !u!114 &7720725165337271278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -739,7 +740,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 30
   AmmoText: {fileID: 2886355328138562404}
-  Bullet: {fileID: 273381113560850852, guid: f9cac2b0de4d88e478202793b9684088, type: 3}
+  Bullet: {fileID: 3480207848529388427, guid: 121edf4ba8dd70c48b058c873c7013e7, type: 3}
   ReloadTime: 3
   FireTime: 2
   MaxAmmo: 5

@@ -17,6 +17,10 @@ namespace Objects
         private Vector3 _correctPosition = Vector3.zero;
         private Quaternion _correctRotation = Quaternion.identity;
         private Vector3 _correctVelocity = Vector3.zero;
+        private void OnEnable()
+        {
+            ShooterName = PhotonNetwork.LocalPlayer.NickName;
+        }
 
         public virtual void SetTarget(Vector3 target)
         {
@@ -34,10 +38,8 @@ namespace Objects
 
             if (!PhotonView.IsMine)
             {
-                Rigidbody.velocity = Vector3.Lerp(Rigidbody.velocity, _correctVelocity, Time.deltaTime );
+                //Rigidbody.velocity = Vector3.Lerp(Rigidbody.velocity, _correctVelocity, Time.deltaTime );
             }
-
-
 
             _timer -= Time.deltaTime;
             if (_timer <= 0&&PhotonView.IsMine)
@@ -48,17 +50,13 @@ namespace Objects
         
         private void OnTriggerEnter(Collider other)
         {
-
-           
             var enemy = other.gameObject.GetComponent<Enemy>();
             if (enemy != null)
             {
-                if(ShooterName!=null)
-                 if(!ShooterName.Equals("NONE"))
-                         enemy.Killer = ShooterName;
-                var health = enemy.gameObject.GetComponentInParent<Health>();
-                if (health != null)
-                    health.Damage(Damage);
+               enemy.Damage(Damage, PhotonNetwork.LocalPlayer);
+          ///     var health = enemy.gameObject.GetComponentInParent<Health>();
+              ///  if (health != null)
+                 ///   health.Damage(Damage);
                 if(PhotonView.IsMine)
                     PhotonNetwork.Destroy(gameObject);
 

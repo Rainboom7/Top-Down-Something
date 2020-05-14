@@ -10,19 +10,28 @@ namespace Objects
         private float _correcthealth;
         public PhotonView PhotonView;
         private bool _firstData;
+        private void OnEnable()
+        {
+            _correcthealth = Health.Hitpoints;
+            Health.SetHp(_correcthealth);
+        }
+        private void Update()
+        {
+        }
 
-  
+
 
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {        
             if (stream.IsWriting)
             {
-                stream.SendNext(Health.Currenthealth);
+                stream.SendNext(_correcthealth);
             }
-            else
+            else if(stream.IsReading)
             {
-                _correcthealth = Mathf.Max((float)stream.ReceiveNext(), 0f);
+                _correcthealth = (float)stream.ReceiveNext();
+                _correcthealth = Mathf.Max(_correcthealth, 0f);
                 Health.SetHp(_correcthealth);
             }
         }

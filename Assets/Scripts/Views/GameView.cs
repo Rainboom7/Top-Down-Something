@@ -52,16 +52,7 @@ namespace Views
 
 		public void StopGame()
 		{
-   
-
-            if (Base != null)
-            {
-               // if (Base.Health != null)
-                   // Base.Health.DieEvent -= OnPlayerDead;
-            }
-
-                    Controller.Base = null;    
-			
+            Controller.Base = null;    
 			foreach(var o in GameObjects) 
 				o.gameObject.SetActive(false);
 		}

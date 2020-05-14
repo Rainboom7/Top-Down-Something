@@ -7,10 +7,8 @@ using UnityEngine.UI;
 
 namespace Views
 {
-	 public class MenuView : BaseView<IMenuView>, IMenuView
-	 {
-		 protected override IMenuView View => this;
-
+	 public class MenuView : BaseView, IMenuView
+	 {	
 		public event Action PlayEvent;
         public event Action<Player> ChoosePlayer;
         [HideInInspector]
@@ -18,14 +16,19 @@ namespace Views
         public TMP_InputField RoomName;
         public TMP_InputField PlayerName;
 
+        private void OnEnable()
+        {
+            PlayerName.text = "Player#" + UnityEngine.Random.Range(0, 100);
+        }
         public void ActionPlay()
         {
             PlayEvent?.Invoke();
         }
         public void Choose(string playerPrefabPath)
         {
-            if(NetworkManager!=null)
+            if (NetworkManager != null)
                 NetworkManager.PlayerPrefabPath = playerPrefabPath;
+            PlayerPrefs.SetString("Hero",playerPrefabPath) ;
         }
         public void CreateRoom()
         {

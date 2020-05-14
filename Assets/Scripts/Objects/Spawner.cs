@@ -17,8 +17,9 @@ namespace Objects
         private Coroutine _spawnRoutine;
         public event Action<string, int> AddScoreEvent;
         private void OnEnable()
-        {          
-            _spawnRoutine = StartCoroutine(SpawnRoutine);
+        {
+            if (PhotonNetwork.IsMasterClient)
+                _spawnRoutine = StartCoroutine(SpawnRoutine);
         }
     
         private void OnDisable()

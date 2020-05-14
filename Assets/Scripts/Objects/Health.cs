@@ -7,14 +7,14 @@ using UnityEngine.UI;
 
 namespace Objects
 {
-    public class Health : MonoBehaviour, IPunObservable
+    public class Health : MonoBehaviour
     {
         public RectTransform Line;
         public event Action DieEvent;
-        public Text Text;
         private Vector2 _healthSize;
         [Range(0, 200)]
         public float Hitpoints;
+        public PhotonView PhotonView;
         public float Currenthealth { get; set; }
         private void OnEnable()
         {
@@ -22,10 +22,13 @@ namespace Objects
             ChangeView();
 
         }
+        public void Damage(float damage) {
+            PhotonView?.RPC("DamageRPC", RpcTarget.All,damage);
+        }
 
-        public void Damage(float damage)
+        [PunRPC]
+        public void DamageRPC(float damage)
         {
-
             Currenthealth -= damage;
             if (Currenthealth <= 0)
                 DieEvent?.Invoke();
@@ -36,26 +39,14 @@ namespace Objects
             Currenthealth = points;
             if (Currenthealth <= 0)
                 DieEvent?.Invoke();
-
-
+            ChangeView();
         }
-     
         private void ChangeView()
         {
             Line.localScale *= Currenthealth / Hitpoints;
-            if(Text!=null)
-            Text.text = Currenthealth.ToString();
+            
         }
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            if (stream.IsWriting)
-            {
-                stream.SendNext(Currenthealth);
-            }
-            else
-                this.Currenthealth = (float)stream.ReceiveNext();
-        }
 
     }
 
